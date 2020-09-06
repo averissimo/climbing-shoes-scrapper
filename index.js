@@ -37,10 +37,6 @@ async function download_js() {
   // screenshot full page to make sure all is rendered (even the delayed scroll elements)
   await page.screenshot({path: 'example.png', fullPage: true});
 
-  await page.waitForNavigation({
-    waitUntil: 'networkidle0',
-  });
-
   // get html code (body tag)
   let buffer = await page.$eval('body', (element) => {
     return element.innerHTML
@@ -66,10 +62,12 @@ async function write2cell(data) {
   // remove existing data in table
   sheet.write(Array(200).fill(Array(6).fill('')), 'gatos_preços!B7');
 
-  console.log(`Preparing to write ${data.length} rows`);
+  console.log(`Preparing to write ${data.length} rows`, data);
 
   // prepare data to write in sheet
   const data_sheet = data.map(el => [el.brand, el.model, el.category, el.price, el.extra, el.url]);
+
+console.log(`Preparing to write ${data.length} rows`, data_sheet);
 
   // write data to sheet
   sheet.write(data_sheet, 'gatos_preços!B7');
