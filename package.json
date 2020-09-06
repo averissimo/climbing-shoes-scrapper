@@ -1,0 +1,19 @@
+{
+  "name": "preco-gatos",
+  "version": "1.0.0",
+  "description": "web scrapper to get climbing shoe prices",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bent": "^7.3.10",
+    "cheerio": "^1.0.0-rc.3",
+    "googleapis": "^59.0.0",
+    "moment": "^2.27.0",
+    "puppeteer": "^5.2.1",
+    "write2sheet": "^1.0.14"
+  }
+}
