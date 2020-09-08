@@ -16,7 +16,7 @@ opts = {
 //
 // Download page and render all javascript necessary
 // this might run forever if timeout is 0
-async function download_js() {
+async function download_js(uri = 'https://www.sportscheck.com/kletterschuhe/', screenshot = 'example.png') {
   // launch chrome instance
   const browser = await puppeteer.launch();
   // start a new page (see puppetter documentation for more info)
@@ -32,10 +32,10 @@ async function download_js() {
   });
 
   // navigate to the page
-  await page.goto('https://www.sportscheck.com/kletterschuhe/', {timeout: opts.timeout, waitUntil: 'networkidle0'});
+  await page.goto(uri, {timeout: opts.timeout, waitUntil: 'networkidle0'});
 
   // screenshot full page to make sure all is rendered (even the delayed scroll elements)
-  await page.screenshot({path: 'example.png', fullPage: true});
+  await page.screenshot({path: screenshot, fullPage: true});
 
   // get html code (body tag)
   let buffer = await page.$eval('body', (element) => {
@@ -59,18 +59,17 @@ async function write2cell(data) {
   const range = 'gatos_preços!B4';
   sheet.write([[mydate]], range);
 
-  // remove existing data in table
-  sheet.write(Array(200).fill(Array(6).fill('')), 'gatos_preços!B7');
-
-  console.log(`Preparing to write ${data.length} rows`, data);
+  //
+  console.log(`Preparing to write ${data.length} rows`);
 
   // prepare data to write in sheet
-  const data_sheet = data.map(el => [el.brand, el.model, el.category, el.price, el.extra, el.url]);
+  const data_sheet = data.sort((a, b) => a.price - b.price).map(el => [el.brand, el.model, el.category, el.price, el.extra, el.url]);
 
-console.log(`Preparing to write ${data.length} rows`, data_sheet);
+  console.log(`Writing ${data_sheet.length} rows...`);
 
   // write data to sheet
-  sheet.write(data_sheet, 'gatos_preços!B7');
+  //  adding 200 lines of empty lines (doing this in one go, instead of 2 writes as second write might not be permanent)
+  sheet.write([...data_sheet, ...Array(200).fill(Array(6).fill(''))], 'gatos_preços!B7');
 }
 
 //
@@ -112,13 +111,22 @@ async function process(buffer) {
 // perform all operations
 async function get_them() {
   // download page
-  let buffer = await download_js();
-  console.log('buffer', buffer)
+  console.log('Downloading page 1')
+  let buffer = await download_js('https://www.sportscheck.com/kletterschuhe/', 'example-1.png');
   // process page
   const out = await process(buffer);
-  console.log('out', out);
+  console.log(`  page 1 with ${out.lenght} items`);
+
+  console.log('Downloading page 2')
+  let buffer2 = await download_js('https://www.sportscheck.com/kletterschuhe/2/', 'example-1.png');
+  const out2 = await process(buffer2);
+  console.log(`  page 2 with ${out2.lenght} items`);
+
   // write data to cell
-  await write2cell(out);
+  console.log('Writing to google sheets')
+  await write2cell([...out, ...out2]);
+
+  console.log('Finished!')
 }
 
 // perform operations
