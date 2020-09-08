@@ -115,12 +115,12 @@ async function get_them() {
   let buffer = await download_js('https://www.sportscheck.com/kletterschuhe/', 'example-1.png');
   // process page
   const out = await process(buffer);
-  console.log(`  page 1 with ${out.lenght} items`);
+  console.log(`  page 1 with ${out.length} items`);
 
   console.log('Downloading page 2')
   let buffer2 = await download_js('https://www.sportscheck.com/kletterschuhe/2/', 'example-1.png');
   const out2 = await process(buffer2);
-  console.log(`  page 2 with ${out2.lenght} items`);
+  console.log(`  page 2 with ${out2.length} items`);
 
   // write data to cell
   console.log('Writing to google sheets')
