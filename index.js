@@ -147,7 +147,6 @@ async function process_sportscheck(buffer) {
   // remove products that have a price above the one defined in options
   // sort from cheapear to most expensive
   return data.filter(el => el.price <= opts.price_top)
-    .sort((a, b) => a.price - b.price)
 }
 
 //
