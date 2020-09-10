@@ -164,6 +164,8 @@ async function get_them() {
   console.log('Finished!')
 }
 
+//
+// Downloads individual pages for Sportscheck
 async function get_sportscheck() {
   console.log('Sportscheck')
   console.log('  Downloading page 1')
@@ -181,6 +183,8 @@ async function get_sportscheck() {
   return [...out, ...out2];
 }
 
+//
+// Downloads individual pages for Bergfreunde
 async function get_bergfreunde() {
   console.log('Bergfreunde')
   console.log('  Downloading page 1')
