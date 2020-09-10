@@ -168,13 +168,13 @@ async function get_them() {
 async function get_sportscheck() {
   console.log('Sportscheck')
   console.log('  Downloading page 1')
-  let buffer = await download_sportscheck('https://www.sportscheck.com/kletterschuhe/', 'example-1.png');
+  let buffer = await download_js('https://www.sportscheck.com/kletterschuhe/', 'example-1.png');
   // process page
   const out = await process_sportscheck(buffer);
   console.log(`    page 1 with ${out.length} items`);
 
   console.log('  Downloading page 2')
-  let buffer2 = await download_sportscheck('https://www.sportscheck.com/kletterschuhe/2/', 'example-1.png');
+  let buffer2 = await download_js('https://www.sportscheck.com/kletterschuhe/2/', 'example-1.png');
   const out2 = await process_sportscheck(buffer2);
 
   console.log(`    page 2 with ${out2.length} items`);
