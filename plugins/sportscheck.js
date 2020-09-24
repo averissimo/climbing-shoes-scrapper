@@ -50,7 +50,7 @@ class Sportscheck extends PluginBare{
     console.log(`    page 1 with ${out.length} items`);
 
     console.log('  Downloading page 2')
-    let buffer2 = await this.download_js('https://www.sportscheck.com/kletterschuhe/2/', 'example-1.png');
+    let buffer2 = await this.download_js('https://www.sportscheck.com/kletterschuhe/2/', 'example-2.png');
     const out2 = await this.process(buffer2);
 
     console.log(`    page 2 with ${out2.length} items`);
