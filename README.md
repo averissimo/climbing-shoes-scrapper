@@ -4,6 +4,8 @@
 
 #### How to use it
 
+Install a recent node version and run `npm install` to install all dependencies
+
 Change the google sheet id code in `index.js` to your own google sheet
 
 ```
@@ -11,8 +13,6 @@ Change the google sheet id code in `index.js` to your own google sheet
 const sheet = new GoogleSheetWrite('<insert your own here>');
 ...
 ```
-
-Install a recent node version and run `npm install` to install all dependencies
 
 Run it using `npm start`
 

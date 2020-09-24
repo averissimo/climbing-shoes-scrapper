@@ -56,7 +56,7 @@ class Sportscheck extends PluginBare{
     console.log(`    page 2 with ${out2.length} items`);
     console.log('- Sportscheck -----------------------')
     return [...out, ...out2];
-}
+  }
 }
 
 module.exports = {
