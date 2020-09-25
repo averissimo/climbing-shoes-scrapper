@@ -6,7 +6,9 @@ const GoogleSheetWrite = require('write2sheet');
 const {Sportscheck} = require('./plugins/sportscheck');
 const {Bergfreunde} = require('./plugins/bergfreunde');
 const {EpicTv} = require('./plugins/epictv');
-const {BananaFingers} = require('./plugins/banana_fingers')
+const {BananaFingers} = require('./plugins/banana_fingers');
+const {SportGigant} = require('./plugins/sportgigant');
+const {Trekkin} = require('./plugins/trekkin');
 
 //
 // write data to google sheet
@@ -49,7 +51,9 @@ async function get_them() {
     new Sportscheck().get(),
     new Bergfreunde().get(),
     new EpicTv().get(),
-    new BananaFingers().get()
+    new BananaFingers().get(),
+    new SportGigant().get(),
+    new Trekkin().get()
   ]);
 
   // write data to cell

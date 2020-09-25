@@ -63,7 +63,8 @@ class PluginBare {
   // Download page and render all javascript necessary
   // this might run forever if timeout is 0
   async download_js(uri, screenshotIx) {
-    const screenshot = `example-${screenshotIx}.png`
+    const domain = new URL(uri).host.replace('.','_' );
+    const screenshot = `screenshot-${domain}-${screenshotIx}.png`
     // launch chrome instance
     const browser = await puppeteer.launch();
     // start a new page (see puppetter documentation for more info)
