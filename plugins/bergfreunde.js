@@ -20,7 +20,7 @@ class Bergfreunde extends PluginBare{
     const sites = [base, ...new Array(len - 1).fill(1).map((el, ix) => `${base}/${ix + 2}`)]
       .map(el => el + '/?_artperpage=96')
 
-    return this._get_html(sites, buffer);
+    return this.get_html(sites, buffer);
   }
 
   //

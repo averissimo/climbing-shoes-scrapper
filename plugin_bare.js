@@ -25,26 +25,32 @@ class PluginBare {
   // Worker method that is implemented for html pages
   // Should be called via _get_html or _get_js
   async _get(sites, buffer0, fun) {
-    const self = this;
+    const self = this; // necessary as this is overwritten in .map method
     const out = sites.map(async (el, ix) => {
-      console.log(`[${self.name}] Downloading page ${ix + 1}`);
+      console.log(`[${self.name}] Downloading page ${ix + 1}...`);
+      // for first page the method allows to use a cache retrieved previously
+      //  example: used to determine number of pages
       const buffer1 = (ix === 0 && buffer0) ? buffer0 : await fun(el, ix);
+      // process the html and retrieve elements
       const out1 = await self.process(buffer1);
       console.log(`[${self.name}] page ${ix + 1} with ${out1.length} items`);
       return out1;
     })
+    // wait for all pages to download
     const result = await Promise.all(out);
-    console.log(`[${this.name}] End -----------------------`);
+    console.log(`[${this.name}] End ---------- with ${result.flat().length} items -------------`);
+    // flatten results from multiple pages into single array of results
+    //  instead of array of arrays
     return result.flat();
   }
 
   // Worker method that is implemented for html pages
-  async _get_html(sites, buffer0) {
+  async get_html(sites, buffer0) {
     return this._get(sites, buffer0, this.download_html);
   }
 
-  // Worker method that is implemented for html pages
-  async _get_js(sites, buffer0) {
+  // Worker method that is implemented for js pages
+  async get_js(sites, buffer0) {
     return this._get(sites, buffer0, this.download_js);
   }
 

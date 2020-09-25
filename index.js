@@ -12,11 +12,15 @@ const {EpicTv} = require('./plugins/epictv')
 async function write2cell(data) {
   // id of google sheet (this might require authorization and a credentials.json file in the same directory)
   const sheet = new GoogleSheetWrite('10pnZL95hek2zTPo8IPnPFlg-5nbpChH9VP3VZW4rP1U');
+  const sheet2 = new GoogleSheetWrite('1WQkXtQO-m9E3gKpTNtsDX6Esdajhnekt0bh1GeN_eQ4');
+  console.log('');
+  console.log('Writing to google sheets...')
+  console.log('');
 
   // Update date
   const mydate = moment().format('YYYY/MM/DD HH:mm:ss');
-  const range = 'gatos_preços!B4';
-  sheet.write([[mydate]], range);
+  sheet.write([[mydate]], 'gatos_preços!B4');
+  sheet2.write([[mydate]], 'All!B4');
 
   //
   console.log(`Preparing to write ${data.length} rows`);
@@ -29,12 +33,17 @@ async function write2cell(data) {
   // write data to sheet
   //  adding 500 lines of empty lines (doing this in one go, instead of 2 writes as second write might not be permanent)
   sheet.write([...data_sheet, ...Array(500).fill(Array(7).fill(''))], 'gatos_preços!B7');
+  sheet2.write([...data_sheet, ...Array(500).fill(Array(7).fill(''))], 'All!B7');
 }
 
 //
 // perform all operations
 async function get_them() {
   // download page
+  console.log('Downloading pages...');
+  console.log('  this might take a while with data sources that need to run javascript');
+  console.log('    (example: sportscheck)');
+  console.log('');
   const results = await Promise.all([
     new Sportscheck().get(),
     new Bergfreunde().get(),
@@ -42,7 +51,6 @@ async function get_them() {
   ]);
 
   // write data to cell
-  console.log('Writing to google sheets')
   await write2cell(results.flat());
 
   console.log('Finished!')

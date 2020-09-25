@@ -21,7 +21,7 @@ class EpicTv extends PluginBare{
     // (this will force initial page to be downloaded again)
     const sites = [base, ...new Array(len).fill(1).map((el, ix) => `${base}&page=${ix + 1}`)]
 
-    return this._get_html(sites, buffer);
+    return this.get_html(sites, buffer);
   }
 
   //
