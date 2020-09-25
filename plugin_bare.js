@@ -74,8 +74,8 @@ class PluginBare {
 
     // This alongs with the screenshot makes sure the full page is properly rendered
     await page.setViewport({
-      width: 1080,
-      height: 10000,
+      width: 1380,
+      height: 15000,
       deviceScaleFactor: 1,
     });
 
