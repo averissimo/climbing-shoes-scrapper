@@ -3,23 +3,23 @@ const cheerio = require('cheerio');
 
 const {PluginBare} = require('../plugin_bare')
 
-class EpicTv extends PluginBare{
+class BananaFingers extends PluginBare{
   //
   // Downloads individual pages for Bergfreunde
 
-  get name() { return 'EpicTv'; }
+  get name() { return 'BananaFingers'; }
 
   async get() {
-    const base = 'https://shop.epictv.com/en/category/climbing-shoes?sort_by=field_product_commerce_price_amount_decimal_asc_1&view_mode=grid'
+    const base = 'https://www.bananafingers.co.uk/category/climbing-shoes?view=grid&f[0]=in_stock%3A1'
 
     // Get number of pages in epictv
     const buffer = await this.download_html(base);
     const $ = cheerio.load(buffer);
-    const len = parseFloat($('.pager-item').not('.last').last().text()) - 1;
+    const len = parseFloat($('.pager-item').last().text()) - 1;
 
     // build array with links to all pages
     // (this will force initial page to be downloaded again)
-    const sites = [base, ...new Array(len).fill(1).map((el, ix) => `${base}&page=${ix + 1}`)]
+    const sites = [base, ...new Array(len).fill(1).map((el, ix) => `${base}&page=${ix + 2}`)]
 
     return this.get_html(sites, buffer);
   }
@@ -33,13 +33,18 @@ class EpicTv extends PluginBare{
 
     const data = [];
     // extract data for each product and add it to data array
-    $('article').each((i , el) => {
-      const brand = $(el).find('.field-name-field-brand .field-item').text().trim() ;
-      const model = $(el).find('.field-name-title-field').text().trim();
+    $('article.node-product-teaser').each((i , el) => {
+      const brand = $(el).find('.node-product-teaser__brand').text().trim() ;
+      const model = $(el).find('.node-product-teaser__name .product-title').text().trim();
       const categ = 'climbing shoe';
-      let price = $(el).find('.field-type-commerce-price .field-items .price-value').text();
+      let price = $(el).find('.node-product-teaser__price .value').text();
       let extra = $(el).find('.discount-percent-badge').text().trim();
-      const uri = 'https://shop.epictv.com' + $(el).find('.field-type-image .field-item a').prop('href');
+      let oos = $(el).find('.node-product-teaser__oos .stock-status-value').text().trim();
+      const uri = 'https://www.bananafingers.co.uk' + $(el).find('a').first().prop('href');
+
+      if (oos && oos === 'currently out of stock') {
+        return;
+      }
 
       let price_down = 0;
 
@@ -61,5 +66,8 @@ class EpicTv extends PluginBare{
 }
 
 module.exports = {
-  EpicTv
+  BananaFingers
 };
+
+
+new BananaFingers().get()

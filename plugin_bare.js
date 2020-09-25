@@ -27,7 +27,7 @@ class PluginBare {
   async _get(sites, buffer0, fun) {
     const self = this; // necessary as this is overwritten in .map method
     const out = sites.map(async (el, ix) => {
-      console.log(`[${self.name}] Downloading page ${ix + 1}...`);
+      console.log(`[${self.name}] Downloading page ${ix + 1}... ${el}`);
       // for first page the method allows to use a cache retrieved previously
       //  example: used to determine number of pages
       const buffer1 = (ix === 0 && buffer0) ? buffer0 : await fun(el, ix);

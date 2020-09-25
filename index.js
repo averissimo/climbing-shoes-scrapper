@@ -3,9 +3,10 @@ const moment = require('moment');
 // library to write to google sheet
 const GoogleSheetWrite = require('write2sheet');
 
-const {Sportscheck} = require('./plugins/sportscheck')
-const {Bergfreunde} = require('./plugins/bergfreunde')
-const {EpicTv} = require('./plugins/epictv')
+const {Sportscheck} = require('./plugins/sportscheck');
+const {Bergfreunde} = require('./plugins/bergfreunde');
+const {EpicTv} = require('./plugins/epictv');
+const {BananaFingers} = require('./plugins/banana_fingers')
 
 //
 // write data to google sheet
@@ -47,7 +48,8 @@ async function get_them() {
   const results = await Promise.all([
     new Sportscheck().get(),
     new Bergfreunde().get(),
-    new EpicTv().get()
+    new EpicTv().get(),
+    new BananaFingers().get()
   ]);
 
   // write data to cell
