@@ -4,6 +4,15 @@ const cheerio = require('cheerio');
 const {PluginBare} = require('../plugin_bare')
 
 class Sportscheck extends PluginBare{
+
+  get name() { return 'Sportscheck'; }
+
+  //
+  // Downloads individual pages for Sportscheck
+  async get() {
+    return this._get_js(['https://www.sportscheck.com/kletterschuhe/', 'https://www.sportscheck.com/kletterschuhe/2/'])
+  }
+  
   //
   // process the html of a page
   async process(buffer) {
@@ -30,32 +39,12 @@ class Sportscheck extends PluginBare{
       }
 
       // add data to array
-      data.push({brand, model, category: categ, price: parseFloat(price), extra, url: uri, source: 'sportscheck'})
+      data.push({brand, model, category: categ, price: parseFloat(price), extra, url: uri, source: this.name.toLowerCase()})
     })
 
     // remove products that have a price above the one defined in options
     // sort from cheapear to most expensive
     return data.filter(el => el.price <= opts.price_top)
-  }
-
-
-  //
-  // Downloads individual pages for Sportscheck
-  async get() {
-    console.log('Sportscheck')
-    console.log('  Downloading page 1')
-    let buffer = await this.download_js('https://www.sportscheck.com/kletterschuhe/', 'example-1.png');
-    // process page
-    const out = await this.process(buffer);
-    console.log(`    page 1 with ${out.length} items`);
-
-    console.log('  Downloading page 2')
-    let buffer2 = await this.download_js('https://www.sportscheck.com/kletterschuhe/2/', 'example-2.png');
-    const out2 = await this.process(buffer2);
-
-    console.log(`    page 2 with ${out2.length} items`);
-    console.log('- Sportscheck -----------------------')
-    return [...out, ...out2];
   }
 }
 

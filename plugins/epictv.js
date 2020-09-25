@@ -3,21 +3,23 @@ const cheerio = require('cheerio');
 
 const {PluginBare} = require('../plugin_bare')
 
-class Bergfreunde extends PluginBare{
+class EpicTv extends PluginBare{
+  //
+  // Downloads individual pages for Bergfreunde
 
-  get name() { return 'Bergfreunde'; }
+  get name() { return 'EpicTv'; }
 
   async get() {
-    const base = 'https://www.bergfreunde.eu/climbing-shoes'
+    const base = 'https://shop.epictv.com/en/category/climbing-shoes?sort_by=field_product_commerce_price_amount_decimal_asc_1&view_mode=grid'
 
     // Get number of pages in epictv
-    const buffer = await this.download_html(base + '/?_artperpage=96');
+    const buffer = await this.download_html(base);
     const $ = cheerio.load(buffer);
-    const len = parseFloat($('.paging .locator-item').last().text());
+    const len = parseFloat($('.pager-item').not('.last').last().text());
 
     // build array with links to all pages
     // (this will force initial page to be downloaded again)
-    const sites = [base + '/?_artperpage=96', ...new Array(len - 1).fill(1).map((el, ix) => `${base}/${ix + 2}/`)]
+    const sites = [base, ...new Array(len).fill(1).map((el, ix) => `${base}&page=${ix + 1}`)]
 
     return this._get_html(sites, buffer);
   }
@@ -31,13 +33,13 @@ class Bergfreunde extends PluginBare{
 
     const data = [];
     // extract data for each product and add it to data array
-    $('#product-list .product-item').each((i , el) => {
-      const brand = $(el).find('.manufacturer-title').text().trim() ;
-      const model = $(el).find('.product-title').text().trim();
+    $('article').each((i , el) => {
+      const brand = $(el).find('.field-name-field-brand .field-item').text().trim() ;
+      const model = $(el).find('.field-name-title-field').text().trim();
       const categ = 'climbing shoe';
-      let price = $(el).find('.product-price .price').not('.uvp').text();
-      let extra = $(el).find('.js-special-discount-percent').text().trim();
-      const uri = $(el).find('a.product-link').prop('href');
+      let price = $(el).find('.field-type-commerce-price .field-items .price-value').text();
+      let extra = $(el).find('.discount-percent-badge').text().trim();
+      const uri = 'https://shop.epictv.com/' + $(el).find('.field-type-image .field-item a').prop('href');
 
       let price_down = 0;
 
@@ -59,5 +61,5 @@ class Bergfreunde extends PluginBare{
 }
 
 module.exports = {
-  Bergfreunde
+  EpicTv
 };

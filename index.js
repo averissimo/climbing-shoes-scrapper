@@ -5,6 +5,7 @@ const GoogleSheetWrite = require('write2sheet');
 
 const {Sportscheck} = require('./plugins/sportscheck')
 const {Bergfreunde} = require('./plugins/bergfreunde')
+const {EpicTv} = require('./plugins/epictv')
 
 //
 // write data to google sheet
@@ -34,12 +35,11 @@ async function write2cell(data) {
 // perform all operations
 async function get_them() {
   // download page
-  const sportscheck = await new Sportscheck().get();
-  const bergfreunde = await new Bergfreunde().get();
+  const results = await Promise.all([new Sportscheck().get(), new Bergfreunde().get(), new EpicTv().get()]);
 
   // write data to cell
   console.log('Writing to google sheets')
-  await write2cell([...sportscheck, ...bergfreunde]);
+  await write2cell(results.flat());
 
   console.log('Finished!')
 }

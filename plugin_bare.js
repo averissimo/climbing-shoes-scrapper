@@ -12,12 +12,39 @@ opts = {
 
 class PluginBare {
 
+  get name() { return 'This must be defined!!'; }
+
   async get() {
       throw new Error('Method must be implemented');
   }
 
   async process(buffer) {
       throw new Error('Method must be implemented');
+  }
+
+  // Worker method that is implemented for html pages
+  async _get(sites, buffer0, fun) {
+    const self = this;
+    const out = sites.map(async (el, ix) => {
+      console.log(`[${self.name}] Downloading page ${ix + 1}`);
+      const buffer1 = (ix === 0 && buffer0) ? buffer0 : await fun(el, ix);
+      const out1 = await self.process(buffer1);
+      console.log(`[${self.name}] page ${ix + 1} with ${out1.length} items`);
+      return out1;
+    })
+    const result = await Promise.all(out);
+    console.log(`[${this.name}] End -----------------------`);
+    return result.flat();
+  }
+
+  // Worker method that is implemented for html pages
+  async _get_html(sites, buffer0) {
+    return this._get(sites, buffer0, this.download_html);
+  }
+
+  // Worker method that is implemented for html pages
+  async _get_js(sites, buffer0) {
+    return this._get(sites, buffer0, this.download_js);
   }
 
   async download_html(uri) {
@@ -28,7 +55,8 @@ class PluginBare {
   //
   // Download page and render all javascript necessary
   // this might run forever if timeout is 0
-  async download_js(uri, screenshot) {
+  async download_js(uri, screenshotIx) {
+    const screenshot = `example-${screenshotIx}.png`
     // launch chrome instance
     const browser = await puppeteer.launch();
     // start a new page (see puppetter documentation for more info)
