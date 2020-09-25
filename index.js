@@ -35,7 +35,11 @@ async function write2cell(data) {
 // perform all operations
 async function get_them() {
   // download page
-  const results = await Promise.all([new Sportscheck().get(), new Bergfreunde().get(), new EpicTv().get()]);
+  const results = await Promise.all([
+    new Sportscheck().get(),
+    new Bergfreunde().get(),
+    new EpicTv().get()
+  ]);
 
   // write data to cell
   console.log('Writing to google sheets')
