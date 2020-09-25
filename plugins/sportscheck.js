@@ -12,7 +12,7 @@ class Sportscheck extends PluginBare{
   async get() {
     return this._get_js(['https://www.sportscheck.com/kletterschuhe/', 'https://www.sportscheck.com/kletterschuhe/2/'])
   }
-  
+
   //
   // process the html of a page
   async process(buffer) {

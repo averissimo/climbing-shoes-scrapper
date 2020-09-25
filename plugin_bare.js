@@ -23,6 +23,7 @@ class PluginBare {
   }
 
   // Worker method that is implemented for html pages
+  // Should be called via _get_html or _get_js
   async _get(sites, buffer0, fun) {
     const self = this;
     const out = sites.map(async (el, ix) => {

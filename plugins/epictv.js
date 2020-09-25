@@ -39,7 +39,7 @@ class EpicTv extends PluginBare{
       const categ = 'climbing shoe';
       let price = $(el).find('.field-type-commerce-price .field-items .price-value').text();
       let extra = $(el).find('.discount-percent-badge').text().trim();
-      const uri = 'https://shop.epictv.com/' + $(el).find('.field-type-image .field-item a').prop('href');
+      const uri = 'https://shop.epictv.com' + $(el).find('.field-type-image .field-item a').prop('href');
 
       let price_down = 0;
 
