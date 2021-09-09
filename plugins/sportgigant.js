@@ -11,7 +11,7 @@ class SportGigant extends PluginBare{
   get name() { return 'SportGigant'; }
 
   async get() {
-    const base = 'https://sportgigant.at/2707-kletterschuhe'
+    const base = 'https://sportgigant.at/2707-kletterschuhe?order=product.price.asc&resultsPerPage=9999999'
 
     // Get number of pages in epictv
     const buffer = await this.download_html(base);
@@ -39,13 +39,16 @@ class SportGigant extends PluginBare{
 
       let extra = ""; //$(el).find('.uk-hidden-small p').text().trim();
       const uri = $(el).find('.product-description .product-brand a').prop('href');
-      const brand = $(el).find('.product-description .product-brand a').text().trim();
 
       let price_down = 0;
 
       const regex = /(.*) Kletterschuhe? (.*)/;
-      // const brand = model.replace(regex, '$1');
+      let brand = model.replace(regex, '$1');
       model = model.replace(regex, '$2');
+
+      if (brand === undefined || brand.trim() === "") {
+        brand = $(el).find('.product-description .product-brand a').text().trim();
+      }
 
       try {
         price = parseFloat(price.replace('€ ','').replace('from ', '').replace(',','.'));
