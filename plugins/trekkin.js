@@ -39,7 +39,7 @@ class Trekkin extends PluginBare{
       }
 
       // add data to array
-      data.push({brand, model, category: categ, price: parseFloat(price), extra, url: uri, source: this.name.toLowerCase()})
+      data.push({brand, model, category: categ, price: parseFloat(price), extra, url: encodeURI(uri), source: this.name.toLowerCase()})
     })
 
     // remove products that have a price above the one defined in options

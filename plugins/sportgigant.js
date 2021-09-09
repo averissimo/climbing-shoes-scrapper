@@ -32,17 +32,19 @@ class SportGigant extends PluginBare{
 
     const data = [];
     // extract data for each product and add it to data array
-    $('#sg-product-list .product-list-item-content').each((i , el) => {
-      let model = $(el).find('.product-list-item-details h3 a').text().trim();
+    $('#products #js-product-list article').each((i , el) => {
+      let model = $(el).find('.product-description .product-title a').text().trim();
       const categ = 'climbing shoe';
-      let price = $(el).find('.price_box .price').text();
-      let extra = $(el).find('.uk-hidden-small p').text().trim();
-      const uri = $(el).find('.product-list-item-details h3 a').prop('href');
+      let price = $(el).find('.product-description .product-price-and-shipping .product-price').prop('content');
+
+      let extra = ""; //$(el).find('.uk-hidden-small p').text().trim();
+      const uri = $(el).find('.product-description .product-brand a').prop('href');
+      const brand = $(el).find('.product-description .product-brand a').text().trim();
 
       let price_down = 0;
 
       const regex = /(.*) Kletterschuhe? (.*)/;
-      const brand = model.replace(regex, '$1');
+      // const brand = model.replace(regex, '$1');
       model = model.replace(regex, '$2');
 
       try {
