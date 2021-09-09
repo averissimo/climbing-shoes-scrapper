@@ -4,13 +4,15 @@ const cheerio = require('cheerio');
 const {PluginBare} = require('../plugin_bare')
 
 class Sportscheck extends PluginBare{
+  //
+  // Downloads individual pages for Bergfreunde
 
   get name() { return 'Sportscheck'; }
 
   //
   // Downloads individual pages for Sportscheck
   async get() {
-    return this.get_js(['https://www.sportscheck.com/kletterschuhe/', 'https://www.sportscheck.com/kletterschuhe/2/'])
+    return this.get_js(['https://www.sportscheck.com/kletterschuhe/', 'https://www.sportscheck.com/kletterschuhe/2/', 'https://www.sportscheck.com/kletterschuhe/3/'])
   }
 
   //

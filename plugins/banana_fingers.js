@@ -5,10 +5,12 @@ const {PluginBare} = require('../plugin_bare')
 
 class BananaFingers extends PluginBare{
   //
-  // Downloads individual pages for Bergfreunde
+  // Downloads individual pages
 
   get name() { return 'BananaFingers'; }
 
+  //
+  // Downloads individual pages for Sportscheck
   async get() {
     const base = 'https://www.bananafingers.co.uk/category/climbing-shoes?view=grid&f[0]=in_stock%3A1'
 
@@ -68,6 +70,3 @@ class BananaFingers extends PluginBare{
 module.exports = {
   BananaFingers
 };
-
-
-new BananaFingers().get()

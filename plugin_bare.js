@@ -4,6 +4,30 @@ const puppeteer = require('puppeteer');
 // library to download html (without processing js)
 const bent = require('bent');
 
+let browser;
+
+async function autoScroll(page) {
+  console.log("auto scrolling...")
+  await page.evaluate(async () => {
+      await new Promise((resolve, reject) => {
+          var totalHeight = 0;
+          var distance = 100;
+          var timer = setInterval(() => {
+              console.log("setInterval");
+              var scrollHeight = document.body.scrollHeight;
+              window.scrollBy(0, distance);
+              totalHeight += distance;
+
+              if(totalHeight >= scrollHeight){
+                  clearInterval(timer);
+                  resolve();
+              }
+              console.log('timer by', totalHeight, scrollHeight)
+          }, 5000);
+      });
+  });
+}
+
 // general options
 opts = {
   price_top: 1000, // filter prices above this value
@@ -20,6 +44,15 @@ class PluginBare {
 
   async process(buffer) {
       throw new Error('Method must be implemented');
+  }
+
+  static async closeBrowser() {
+    if (PluginBare.browser !== undefined) {
+      await PluginBare.browser.close();
+      console.log("Browser closed (puppeteer).");
+    } else {
+      console.log("Browser wasn't open (puppeteer).");
+    }
   }
 
   // Worker method that is implemented for html pages
@@ -66,9 +99,15 @@ class PluginBare {
     const domain = new URL(uri).host.replace('.','_' );
     const screenshot = `screenshot-${domain}-${screenshotIx}.png`
     // launch chrome instance
-    const browser = await puppeteer.launch();
+    // const browser = await puppeteer.launch();
+    if (PluginBare.browser === undefined) {
+      console.log("launch a new browser!");
+      PluginBare.browser = await puppeteer.launch();
+    }
+
     // start a new page (see puppetter documentation for more info)
-    const page = await browser.newPage();
+    const page = await PluginBare.browser.newPage();
+    await page.setUserAgent('Mozilla/5.0 (X11; Linux x86_64; rv:94.0) Gecko/20100101 Firefox/94.0');
     // Extend the timeout
     page.setDefaultNavigationTimeout(opts.timeout)
 
@@ -81,6 +120,10 @@ class PluginBare {
 
     // navigate to the page
     await page.goto(uri, {timeout: opts.timeout, waitUntil: 'networkidle0'});
+    await page.screenshot({path: "before-autoscroll-" + screenshot, fullPage: true});
+
+    //
+    // await autoScroll(page);
 
     // screenshot full page to make sure all is rendered (even the delayed scroll elements)
     await page.screenshot({path: screenshot, fullPage: true});
@@ -90,8 +133,11 @@ class PluginBare {
       return element.innerHTML
     })
 
+    // close page
+    await page.close();
+
     // close chrome instance
-    await browser.close();
+    // await browser.close();
 
     // returns html code for body tag
     return buffer;

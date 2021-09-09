@@ -2,6 +2,9 @@
 const moment = require('moment');
 // library to write to google sheet
 const GoogleSheetWrite = require('write2sheet');
+const puppeteer = require('puppeteer');
+
+const {PluginBare} = require('./plugin_bare')
 
 const {Sportscheck} = require('./plugins/sportscheck');
 const {Bergfreunde} = require('./plugins/bergfreunde');
@@ -37,11 +40,14 @@ async function write2cell(data) {
   //  adding 500 lines of empty lines (doing this in one go, instead of 2 writes as second write might not be permanent)
   sheet.write([...data_sheet, ...Array(500).fill(Array(7).fill(''))], 'gatos_preços!B7');
   sheet2.write([...data_sheet, ...Array(500).fill(Array(7).fill(''))], 'All!B7');
+
+  return;
 }
 
 //
 // perform all operations
 async function get_them() {
+  PluginBare.browser = await puppeteer.launch();
   // download page
   console.log('Downloading pages...');
   console.log('  this might take a while with data sources that need to run javascript');
@@ -50,18 +56,22 @@ async function get_them() {
   const results = await Promise.all([
     new Sportscheck().get(),
     new Bergfreunde().get(),
-    new EpicTv().get(),
     new BananaFingers().get(),
     new SportGigant().get(),
-    new Trekkin().get()
+    new Trekkin().get(),
+    new EpicTv().get()
   ]);
+  await PluginBare.browser.close();
 
+  console.log("Writing to google docs", results.flat().length);
   // write data to cell
   await write2cell(results.flat());
 
   console.log('Finished!')
+  return;
 }
 
+// new EpicTv().get()
 // perform operations
 // get_them()
-get_them()
+get_them().then(console.log).catch(console.error);

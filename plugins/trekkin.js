@@ -17,7 +17,6 @@ class Trekkin extends PluginBare{
   //
   // process the html of a page
   async process(buffer) {
-
     // load the code to cheerio library
     const $ = cheerio.load(buffer);
 
