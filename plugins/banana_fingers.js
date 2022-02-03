@@ -12,7 +12,7 @@ class BananaFingers extends PluginBare{
   //
   // Downloads individual pages for Sportscheck
   async get() {
-    const base = 'https://www.bananafingers.co.uk/category/climbing-shoes?view=grid&f[0]=in_stock%3A1'
+    const base = 'https://www.bananafingers.co.uk/category/climbing-shoes?view=grid&f[0]=in_stock%3A1&currency=EUR&country=DE'
 
     // Get number of pages in epictv
     const buffer = await this.download_html(base);
