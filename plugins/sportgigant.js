@@ -11,7 +11,7 @@ class SportGigant extends PluginBare{
   get name() { return 'SportGigant'; }
 
   async get() {
-    const base = 'https://sportgigant.at/2707-kletterschuhe?order=product.price.asc&resultsPerPage=9999999'
+    const base = 'https://sportgigant.at/2707-kletterschuhe/s-76/auf_lager-ja/schuhgrosse-415/schuhgrosse-41/schuhgrosse-405/schuhgrosse-40?order=product.price.asc&resultsPerPage=9999999'
 
     // Get number of pages in epictv
     const buffer = await this.download_html(base);

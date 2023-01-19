@@ -53,19 +53,22 @@ async function get_them() {
   console.log('  this might take a while with data sources that need to run javascript');
   console.log('    (example: sportscheck)');
   console.log('');
-  const results = await Promise.all([
-    new Sportscheck().get(),
+  let results = await Promise.all([
+    // new Sportscheck().get(),
     new Bergfreunde().get(),
     new BananaFingers().get(),
     new SportGigant().get(),
-    new Trekkin().get(),
+    //new Trekkin().get(),
     new EpicTv().get()
   ]);
+  console.log("Closing");
   await PluginBare.browser.close();
 
-  console.log("Writing to google docs", results.flat().length);
+  results = results.flat().filter((el) => el !== undefined);
+
+  console.log("Writing to google docs", results.length);
   // write data to cell
-  await write2cell(results.flat());
+  await write2cell(results);
 
   console.log('Finished!')
   return;

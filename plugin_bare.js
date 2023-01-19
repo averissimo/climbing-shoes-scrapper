@@ -74,6 +74,7 @@ class PluginBare {
     console.log(`[${this.name}] End ---------- with ${result.flat().length} items -------------`);
     // flatten results from multiple pages into single array of results
     //  instead of array of arrays
+
     return result.flat();
   }
 
@@ -84,7 +85,11 @@ class PluginBare {
 
   // Worker method that is implemented for js pages
   async get_js(sites, buffer0) {
-    return this._get(sites, buffer0, this.download_js);
+    return this._get(sites, buffer0, this.download_js)
+      // .catch((error) => {
+      //   console.log(`\n[${this.name}] ERROR ERROR ERROR :: ${error}\n`);
+      //   return [];
+      // });
   }
 
   async download_html(uri) {
@@ -101,16 +106,22 @@ class PluginBare {
     // launch chrome instance
     // const browser = await puppeteer.launch();
     if (PluginBare.browser === undefined) {
-      console.log("launch a new browser!");
+      console.log("Launch a new browser!");
       PluginBare.browser = await puppeteer.launch();
+    } else {
+      console.log("Browser already exists!");
     }
 
     // start a new page (see puppetter documentation for more info)
+    console.log("New page");
     const page = await PluginBare.browser.newPage();
+    console.log("set user agent");
     await page.setUserAgent('Mozilla/5.0 (X11; Linux x86_64; rv:94.0) Gecko/20100101 Firefox/94.0');
     // Extend the timeout
+    console.log("default timeout");
     page.setDefaultNavigationTimeout(opts.timeout)
 
+    console.log("setViewport");
     // This alongs with the screenshot makes sure the full page is properly rendered
     await page.setViewport({
       width: 1380,
@@ -118,16 +129,32 @@ class PluginBare {
       deviceScaleFactor: 1,
     });
 
+    console.log("goto");
     // navigate to the page
-    await page.goto(uri, {timeout: opts.timeout, waitUntil: 'networkidle0'});
-    await page.screenshot({path: "before-autoscroll-" + screenshot, fullPage: true});
+    await page.goto(uri, { timeout: opts.timeout, waitUntil: 'networkidle0'});
 
+    const button = await (await page.evaluateHandle(`document.getElementById("usercentrics-root").shadowRoot.querySelector("button[data-testid=uc-accept-all-button]")`)).asElement();
+    if (button !== undefined && button !== null) {
+      console.log(button);
+      button.click();
+    }
+
+    console.log("screenshot");
+    await page.screenshot({path: "before-autoscroll-" + screenshot, fullPage: true});
+    console.log("scroll!");
     //
     // await autoScroll(page);
 
+    await page.evaluate(() => {
+      const container = window.scroll(0, 200);
+    });
+
+
+    console.log("screenshot again");
     // screenshot full page to make sure all is rendered (even the delayed scroll elements)
     await page.screenshot({path: screenshot, fullPage: true});
 
+    console.log("get htmnl");
     // get html code (body tag)
     let buffer = await page.$eval('body', (element) => {
       return element.innerHTML

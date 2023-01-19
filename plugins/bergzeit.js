@@ -7,13 +7,13 @@ class Sportscheck extends PluginBare{
   //
   // Downloads individual pages for Bergfreunde
 
-  get name() { return 'Sportscheck'; }
+  get name() { return 'Bergzeit'; }
 
   //
   // Downloads individual pages for Sportscheck
   async get() {
-    this.get_js(['https://www.sportscheck.com/kletterschuhe/'])
-    // this.get_js(['https://www.sportscheck.com/kletterschuhe/', 'https://www.sportscheck.com/kletterschuhe/2/', 'https://www.sportscheck.com/kletterschuhe/3/'])
+    const url = "https://www.bergzeit.at/outlet-kletterschuhe/?sort=number_sort.price%3AASC&Größe[]=39&Größe[]=39.5&Größe[]=40&Größe[]=40.5&Größe[]=41&Größe[]=41.5"
+    return this.get_js([url + '&pgNr=1'])
   }
 
   //
