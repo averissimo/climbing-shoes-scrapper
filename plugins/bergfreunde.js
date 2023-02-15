@@ -34,7 +34,7 @@ class Bergfreunde extends PluginBare{
     // extract data for each product and add it to data array
     $('#product-list .product-item').each((i , el) => {
       const brand = $(el).find('.manufacturer-title').text().trim() ;
-      const model = $(el).find('.product-title').text().trim();
+      const model = $(el).find('.product-title').text().trim().replace("\n", " // ");
       const categ = 'climbing shoe';
       let price = $(el).find('.product-price .price').not('.uvp').text();
       let extra = $(el).find('.js-special-discount-percent').text().trim();

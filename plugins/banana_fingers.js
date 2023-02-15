@@ -9,19 +9,21 @@ class BananaFingers extends PluginBare{
 
   get name() { return 'BananaFingers'; }
 
-  //
+  // https://bananafingers.com/footwear/climbing-shoes?view=grid&f[0]=in_stock%3A1&currency=EUR&country=DE
   // Downloads individual pages for Sportscheck
   async get() {
-    const base = 'https://www.bananafingers.co.uk/category/climbing-shoes?view=grid&f[0]=in_stock%3A1&currency=EUR&country=DE'
+    const base = 'https://bananafingers.com/footwear/climbing-shoes?product_list_limit=36&stock=1&view=grid'
 
     // Get number of pages in epictv
     const buffer = await this.download_html(base);
     const $ = cheerio.load(buffer);
-    const len = parseFloat($('.pager-item').last().text()) - 1;
+
+    // const len = parseFloat($('.pages-items .item .page span:not(.pages-item-next)').last().text()) - 1;
+    const len = Math.ceil(parseFloat($(".toolbar .toolbar-amount .toolbar-number").last().text()) / 36) - 1;
 
     // build array with links to all pages
     // (this will force initial page to be downloaded again)
-    const sites = [base, ...new Array(len).fill(1).map((el, ix) => `${base}&page=${ix + 2}`)]
+    const sites = [base, ...new Array(len).fill(1).map((el, ix) => `${base}&p=${ix + 2}`)]
 
     return this.get_html(sites, buffer);
   }
@@ -35,29 +37,32 @@ class BananaFingers extends PluginBare{
 
     const data = [];
     // extract data for each product and add it to data array
-    $('article.node-product-teaser').each((i , el) => {
-      const brand = $(el).find('.node-product-teaser__brand').text().trim() ;
-      const model = $(el).find('.node-product-teaser__name .product-title').text().trim();
+    $('.products.list.items.product-items .item.product.product-item .product-item-info').each((i , el) => {
+      let brand = $(el).find('.product-item-name').text().trim() ;
+      const model = $(el).find('.product-item-name').text().trim();
       const categ = 'climbing shoe';
-      let price = $(el).find('.node-product-teaser__price .value').text();
-      let extra = $(el).find('.discount-percent-badge').text().trim();
-      let oos = $(el).find('.node-product-teaser__oos .stock-status-value').text().trim();
-      const uri = 'https://www.bananafingers.co.uk' + $(el).find('a').first().prop('href');
+      let price = $(el).find('.price-wrapper').prop("data-price-amount");
+      let extra = ""
 
-      if (oos && oos === 'currently out of stock') {
-        return;
-      }
+      const uri = $(el).find('a.product-item-link').first().prop('href');
+
+      const brands = [
+        'EB', 'Black Diamond', 'Butora', 'Red Chilly', 'Unparallel', 'La Sportiva', 'Scarpa', 'Ocun', 'Tenaya', 'Five[- ]?Ten',
+        'Boreal', 'Evolv', 'Andrea Boldrini'
+      ].join("|");
+
+      brand = brand.replace(new RegExp(`(${brands}).*`, 'i'), '$1');
 
       let price_down = 0;
 
       try {
-        price = parseFloat(price.replace('€ ','').replace('from ', '').replace(',','.'));
+        price = parseFloat(price.replace('€ ','').replace('from ', '').replace(',','.')) * 1.13; // Conversion from pounds to euro
       } catch (error) {
         // do nothing
       }
 
       // add data to array
-      data.push({brand, model, category: categ, price: parseFloat(price), extra, url: uri, source: this.name.toLowerCase()})
+      data.push({brand, model, category: categ, price: parseFloat(price).toFixed(2), extra, url: uri, source: this.name.toLowerCase()})
     })
 
     // remove products that have a price above the one defined in options

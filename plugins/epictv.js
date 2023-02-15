@@ -10,16 +10,18 @@ class EpicTv extends PluginBare{
   get name() { return 'EpicTv'; }
 
   async get() {
-    const base = 'https://shop.epictv.com/en/category/climbing-shoes?sort_by=field_product_commerce_price_amount_decimal_asc_1&view_mode=grid'
+    const base = 'https://epictv.com/footwear/climbing-shoes?product_list_limit=36&stock=1&view=grid'
 
     // Get number of pages in epictv
     const buffer = await this.download_html(base);
     const $ = cheerio.load(buffer);
-    const len = parseFloat($('.pager-item').not('.last').last().text()) - 1;
+
+    // const len = parseFloat($('.pages-items .item .page span:not(.pages-item-next)').last().text()) - 1;
+    const len = Math.ceil(parseFloat($(".toolbar .toolbar-amount .toolbar-number").last().text()) / 36) - 1;
 
     // build array with links to all pages
     // (this will force initial page to be downloaded again)
-    const sites = [base, ...new Array(len).fill(1).map((el, ix) => `${base}&page=${ix + 1}`)]
+    const sites = [base, ...new Array(len).fill(1).map((el, ix) => `${base}&p=${ix + 2}`)]
 
     return this.get_html(sites, buffer);
   }
@@ -32,25 +34,32 @@ class EpicTv extends PluginBare{
     const $ = cheerio.load(buffer);
 
     const data = [];
-    // extract data for each product and add it to data array
-    $('article').each((i , el) => {
-      const brand = $(el).find('.field-name-field-brand .field-item').text().trim() ;
-      const model = $(el).find('.field-name-title-field').text().trim();
+    $('.products.list.items.product-items .item.product.product-item .product-item-info').each((i , el) => {
+      let brand = $(el).find('.product-item-name').text().trim() ;
+      const model = $(el).find('.product-item-name').text().trim();
       const categ = 'climbing shoe';
-      let price = $(el).find('.field-type-commerce-price .field-items .price-value').text();
-      let extra = $(el).find('.discount-percent-badge').text().trim();
-      const uri = 'https://shop.epictv.com' + $(el).find('.field-type-image .field-item a').prop('href');
+      let price = $(el).find('.price-wrapper').prop("data-price-amount");
+      let extra = ""
+
+      const uri = $(el).find('a.product-item-link').first().prop('href');
+
+      const brands = [
+        'EB', 'Black Diamond', 'Butora', 'Red Chilly', 'Unparallel', 'La Sportiva', 'Scarpa', 'Ocun', 'Tenaya', 'Five[- ]?Ten',
+        'Boreal', 'Evolv', 'Andrea Boldrini'
+      ].join("|");
+
+      brand = brand.replace(new RegExp(`(${brands}).*`, 'i'), '$1');
 
       let price_down = 0;
 
       try {
-        price = parseFloat(price.replace('€ ','').replace('from ', '').replace(',','.'));
+        price = parseFloat(price.replace('€ ','').replace('from ', '').replace(',','.')) * 1.13; // Conversion from pounds to euro
       } catch (error) {
         // do nothing
       }
 
       // add data to array
-      data.push({brand, model, category: categ, price: parseFloat(price), extra, url: uri, source: this.name.toLowerCase()})
+      data.push({brand, model, category: categ, price: parseFloat(price).toFixed(2), extra, url: uri, source: this.name.toLowerCase()})
     })
 
     // remove products that have a price above the one defined in options

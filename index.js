@@ -26,7 +26,7 @@ async function write2cell(data) {
   // Update date
   const mydate = moment().format('YYYY/MM/DD HH:mm:ss');
   sheet.write([[mydate]], 'gatos_preços!B4');
-  sheet2.write([[mydate]], 'All!B4');
+  sheet2.write([[mydate]], 'gatos_preços!B4');
 
   //
   console.log(`Preparing to write ${data.length} rows`);
@@ -39,7 +39,7 @@ async function write2cell(data) {
   // write data to sheet
   //  adding 500 lines of empty lines (doing this in one go, instead of 2 writes as second write might not be permanent)
   sheet.write([...data_sheet, ...Array(500).fill(Array(7).fill(''))], 'gatos_preços!B7');
-  sheet2.write([...data_sheet, ...Array(500).fill(Array(7).fill(''))], 'All!B7');
+  sheet2.write([...data_sheet, ...Array(500).fill(Array(7).fill(''))], 'gatos_preços!B7');
 
   return;
 }
@@ -55,18 +55,24 @@ async function get_them() {
   console.log('');
   let results = await Promise.all([
     // new Sportscheck().get(),
+    //new Trekkin().get(),
+    //
+    new EpicTv().get(),
     new Bergfreunde().get(),
     new BananaFingers().get(),
     new SportGigant().get(),
-    //new Trekkin().get(),
-    new EpicTv().get()
   ]);
-  console.log("Closing");
+
   await PluginBare.browser.close();
 
   results = results.flat().filter((el) => el !== undefined);
 
+  for (el of results) {
+    console.log(`${el.brand} :: ${el.model} :: ${el.category} :: ${el.price} :: ${el.url} :: ${el.source}`);
+  }
+
   console.log("Writing to google docs", results.length);
+  return;
   // write data to cell
   await write2cell(results);
 
