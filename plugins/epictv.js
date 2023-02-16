@@ -53,13 +53,15 @@ class EpicTv extends PluginBare{
       let price_down = 0;
 
       try {
-        price = parseFloat(price.replace('€ ','').replace('from ', '').replace(',','.')) * 1.13; // Conversion from pounds to euro
+        price = parseFloat(price.replace('€ ','').replace('from ', '').replace(',','.')); // Conversion from pounds to euro
       } catch (error) {
         // do nothing
       }
 
+      const roundAccurately = (number, decimalPlaces) => Number(Math.round(number + "e" + decimalPlaces) + "e-" + decimalPlaces)
+
       // add data to array
-      data.push({brand, model, category: categ, price: parseFloat(price).toFixed(2), extra, url: uri, source: this.name.toLowerCase()})
+      data.push({brand, model, category: categ, price: roundAccurately(parseFloat(price), 2), extra, url: uri, source: this.name.toLowerCase()})
     })
 
     // remove products that have a price above the one defined in options

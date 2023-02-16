@@ -3,7 +3,7 @@ const cheerio = require('cheerio');
 
 const {PluginBare} = require('../plugin_bare')
 
-class Sportscheck extends PluginBare{
+class Bergzeit extends PluginBare{
   //
   // Downloads individual pages for Bergfreunde
 
@@ -12,7 +12,7 @@ class Sportscheck extends PluginBare{
   //
   // Downloads individual pages for Sportscheck
   async get() {
-    const url = "https://www.bergzeit.at/outlet-kletterschuhe/?sort=number_sort.price%3AASC&Größe[]=39&Größe[]=39.5&Größe[]=40&Größe[]=40.5&Größe[]=41&Größe[]=41.5"
+    const url = "https://www.bergzeit.at/outlet/schuhe/kletterschuhe/?filter.article_size=34.5&filter.article_size=35&filter.article_size=35.5&filter.article_size=36&filter.article_size=36.5&filter.article_size=39&filter.article_size=39.5&filter.article_size=40&filter.article_size=40.5&filter.article_size=41&filter.article_size=41.5&filter.article_size=42&filter.article_size=42.5&sortBy=price"
     return this.get_js([url + '&pgNr=1'])
   }
 
@@ -25,13 +25,13 @@ class Sportscheck extends PluginBare{
 
     const data = [];
     // extract data for each product and add it to data array
-    $('.productlist-wrapper .productlist-item').each((i , el) => {
-      const brand = $(el).find('.productlist-item-brand').text().trim() ;
-      const model = $(el).find('.productlist-item-name').text().trim();
+    $('.products-list .products-list__element').each((i , el) => {
+      const brand = $(el).find('.product-box-content__brand').text().trim() ;
+      const model = $(el).find('.product-box-content__name').text().trim();
       const categ = $(el).find('.productlist-item-category').text().trim();
-      let price = $(el).find('.price').not('.price--crossed').find('span').prop('content');
-      let extra = $(el).find('.accentuation__container').text().trim();
-      const uri = $(el).find('a').prop('href');
+      let price = $(el).find('.product-box-content__price').text().trim();
+      let extra = "";
+      const uri = "https://www.bergzeit.at/" + $(el).find('a.product-box.products-list__product-box').prop('href');
 
       let price_down = 0;
 
@@ -52,5 +52,5 @@ class Sportscheck extends PluginBare{
 }
 
 module.exports = {
-  Sportscheck
+  Bergzeit
 };

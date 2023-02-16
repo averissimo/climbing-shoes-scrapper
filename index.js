@@ -8,6 +8,7 @@ const {PluginBare} = require('./plugin_bare')
 
 const {Sportscheck} = require('./plugins/sportscheck');
 const {Bergfreunde} = require('./plugins/bergfreunde');
+const {Bergzeit} = require('./plugins/bergzeit');
 const {EpicTv} = require('./plugins/epictv');
 const {BananaFingers} = require('./plugins/banana_fingers');
 const {SportGigant} = require('./plugins/sportgigant');
@@ -57,6 +58,7 @@ async function get_them() {
     // new Sportscheck().get(),
     //new Trekkin().get(),
     //
+    // new Bergzeit().get(),
     new EpicTv().get(),
     new Bergfreunde().get(),
     new BananaFingers().get(),
@@ -67,12 +69,12 @@ async function get_them() {
 
   results = results.flat().filter((el) => el !== undefined);
 
-  for (el of results) {
-    console.log(`${el.brand} :: ${el.model} :: ${el.category} :: ${el.price} :: ${el.url} :: ${el.source}`);
-  }
+  //for (el of results) {
+  //  console.log(`${el.brand} :: ${el.model} :: ${el.category} :: ${el.price} :: ${el.url} :: ${el.source}`);
+  //}
 
   console.log("Writing to google docs", results.length);
-  return;
+  //return;
   // write data to cell
   await write2cell(results);
 
